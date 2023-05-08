@@ -18,8 +18,8 @@ namespace Mars_Mips_Simulator.DataBase
             new Register("$a2","6","0x00000000"),
             new Register("$a3","7","0x00000000"),
             new Register("$t0","8","0x00000000"),
-            new Register("$t1","9","0x00000012"),
-            new Register("$t2","10","0x00000011"),
+            new Register("$t1","9","0x00000000"),
+            new Register("$t2","10","0x00000000"),
             new Register("$t3","11","0x00000000"),
             new Register("$t4","12","0x00000000"),
             new Register("$t5","13","0x00000000"),
@@ -47,11 +47,14 @@ namespace Mars_Mips_Simulator.DataBase
 
         };
 
-        public List<Register> getRegister()
+        public List<Register> getRegisters()
         {
             return this.registers;
         }
-
+        public Register getRegister(string registerName)
+        {
+           return registers.Where(p => p.name == registerName).First();
+        }
         public void changeValue( Register r)
         {
              registers.Where(p => p.name == r.name ).First().value=r.value;

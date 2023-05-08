@@ -21,9 +21,11 @@ namespace Mars_Mips_Simulator
         Validate validation;
         Function func;
         string functionName;
-        Register result,v1,v2, baseRegister;
-        int insMemory = 0x004000000;
-        int pc = 0x004000000;
+        Register result,v1,v2, baseRegister,pc;
+        int insMemory = 0x00400000;
+
+
+
         List<int> labes;
 
         List<Instruction> ınstructions;
@@ -35,7 +37,8 @@ namespace Mars_Mips_Simulator
             this.validation = new Validate();
             this.func = new Function();
             ınstructions = new List<Instruction>();
-             this.labes = new List<int>();
+            this.labes = new List<int>();
+            this.pc = registerdb.getRegister("$pc");
             InitializeComponent();
 
         }
@@ -65,7 +68,7 @@ namespace Mars_Mips_Simulator
 
         private void showAllRegister()
         {
-            foreach (Register s in registerdb.getRegister())
+            foreach (Register s in registerdb.getRegisters())
             {
 
                 this.item = new ListViewItem(s.name);
@@ -98,6 +101,13 @@ namespace Mars_Mips_Simulator
         private void button2_Click(object sender, EventArgs e)
         {
             this.richTextBox1.Clear();
+            this.registerdb = new RegisterDb();
+            this.listView1.Items.Clear();
+            this.listView2.Items.Clear();
+            showAllRegister();
+            showAllData();
+        
+
         }
 
         private void richTextBox1_TextChanged(object sender, EventArgs e)
@@ -111,7 +121,7 @@ namespace Mars_Mips_Simulator
             this.listView2.Visible = true;
 
             createInstruction();
-            pc = 0x004000000;
+            pc.value = "0x00400000";
 
             try
             {
@@ -132,42 +142,48 @@ namespace Mars_Mips_Simulator
                     {
                         if (functionName == "j")
                         {
-                            pc = item+4;
+                            pc.value =(item + 4).ToString("X");
+                     
                         }
                     }
 
 
              
 
-                    if (pc == ınstructions[i].insMemory)
+                    if (Convert.ToInt32(pc.value, 16) == ınstructions[i].insMemory)
                     {
 
-                        result = registerdb.getRegister().Where(p => p.name == variableList[0]).First();
+                        result = registerdb.getRegisters().Where(p => p.name == variableList[0]).First();
 
                         if (variableList[1].Substring(0, 1) == "$")
                         {
-                            v1 = registerdb.getRegister().Where(p => p.name == variableList[1]).First();
+                            v1 = registerdb.getRegisters().Where(p => p.name == variableList[1]).First();
                         }
 
                         if (variableList.Length > 2)
                         {
                             if (variableList[2].Substring(0, 1) == "$")
                             {
-                                v2 = registerdb.getRegister().Where(p => p.name == variableList[2]).First();
+                                v2 = registerdb.getRegisters().Where(p => p.name == variableList[2]).First();
                             }
                         }
                         runInstruction(variableList);
-                        pc += 4;
+                        pc.value = (Convert.ToInt32(pc.value, 16) + 4).ToString("X");
+
                     }
-                    
-                    
 
 
 
-                 
+
+
+
 
 
                 }
+                this.listView1.Items.Clear();
+                this.listView2.Items.Clear();
+                showAllRegister();
+                showAllData();
                 ınstructions.Clear();
             
 
@@ -233,8 +249,8 @@ namespace Mars_Mips_Simulator
                         {
                             result.value = this.func.add(v1.value, v2.value);
                         }
-
-                        result.value = "0x" + int.Parse(result.value).ToString("D8"); ;
+                        result.value =int.Parse(result.value).ToString("x");
+                        result.value = "0x" + result.value; 
                         registerdb.changeValue(result);
                         listView1.Items[int.Parse(result.number)].SubItems[2].Text = result.value;
                         break;
@@ -363,22 +379,26 @@ namespace Mars_Mips_Simulator
                     case "lw":
                         string offset = variableList[1].Split("(")[0];
                         string base1 = variableList[1].Split("(")[1].Split(")")[0];
-                        baseRegister = registerdb.getRegister().Where(p => p.name == base1).First();
-                        result.value = this.func.lw(baseRegister.value, offset);
-                        registerdb.changeValue(result);
+                        baseRegister = registerdb.getRegisters().Where(p => p.name == base1).First();
+                        //result.value = this.func.lw(baseRegister.value, offset);
+                        string address = this.func.lw(baseRegister.value, offset);
+                        string dataValue = datadb.getData().Where(p => Convert.ToInt32(p.adress, 16) == Convert.ToInt32(address, 16)).First().value0;
+                        registerdb.assignValue(result, dataValue);
                         //result.value = "0x" + int.Parse(result.value).ToString("X");
-                        listView1.Items[int.Parse(result.number)].SubItems[2].Text = result.value;
+                        listView1.Items[int.Parse(result.number)].SubItems[2].Text = dataValue;
 
                         break;
 
                     case "sw":
                         string offset1 = variableList[1].Split("(")[0];
                         string base2 = variableList[1].Split("(")[1].Split(")")[0];
-                        baseRegister = registerdb.getRegister().Where(p => p.name == base2).First();
+                        baseRegister = registerdb.getRegisters().Where(p => p.name == base2).First();
                         string number = this.func.sw(baseRegister.value, offset1);
                         //result.value = "0x" + int.Parse(result.value).ToString("X");
                         datadb.setValue(number, result.value);
                         listView2.Items[int.Parse(number)].SubItems[1].Text = result.value;
+
+                        break;
 
 
                         break;
