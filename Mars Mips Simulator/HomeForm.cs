@@ -48,17 +48,13 @@ namespace Mars_Mips_Simulator
         private void HomeForm_Load(object sender, EventArgs e)
         {
             this.listView2.Visible = false;
+            this.listView3.Visible = false;
             this.listView1.Items.Clear();
             this.listView2.Items.Clear();
             showAllRegister();
             showAllData();
+            showAllInstruc();
 
-
-         //   this.richTextBox1.Text = "slt $t0, $s1, $s2";
-
-            this.listView1.LabelEdit = true;
-            this.listView1.FullRowSelect = true;
-            this.listView1.Refresh();
         }
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
@@ -99,11 +95,32 @@ namespace Mars_Mips_Simulator
 
             }
         }
+        private void showAllInstruc()
+        {
+            foreach (Instruction s in ınstructions)
+            {
+
+                this.item = new ListViewItem(s.insMemory.ToString("X"));
+                this.item.SubItems.Add(s.insMemory.ToString());
+                this.item.SubItems.Add(s.data);
+
+
+
+                listView3.Items.Add(item);
+
+            }
+        }
+
+        private void listView3_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
 
         private void button2_Click(object sender, EventArgs e)
         {
             labes.Clear();
-      
+            this.richTextBox1.Visible = true;
+            this.listView3.Visible = false;
             this.richTextBox1.Clear();
             this.registerdb = new RegisterDb();
             this.listView1.Items.Clear();
@@ -123,7 +140,8 @@ namespace Mars_Mips_Simulator
         private void button1_Click(object sender, EventArgs e)
         {
             this.listView2.Visible = true;
-
+            this.richTextBox1.Visible = false;
+            this.listView3.Visible = true;
             createInstruction();
             pc.value = "0x00400000";
 
@@ -208,11 +226,7 @@ namespace Mars_Mips_Simulator
 
                 }
 
-                this.listView1.Items.Clear();
-                this.listView2.Items.Clear();
-                showAllRegister();
-                showAllData();
-                ınstructions.Clear();
+                //ınstructions.Clear();
 
 
             }
@@ -223,6 +237,12 @@ namespace Mars_Mips_Simulator
             }
 
 
+            this.listView1.Items.Clear();
+            this.listView2.Items.Clear();
+            this.listView3.Items.Clear();
+            showAllRegister();
+            showAllData();
+            showAllInstruc();
 
 
 
