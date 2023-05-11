@@ -12,6 +12,7 @@ using System.Windows.Forms;
 
 namespace Mars_Mips_Simulator
 {
+  
     public partial class HomeForm : Form
     {
 
@@ -21,12 +22,12 @@ namespace Mars_Mips_Simulator
         Validate validation;
         Function func;
         string functionName;
-        Register result,v1,v2, baseRegister,pc;
+        Register result,v1,v2, baseRegister,pc,ra;
         int insMemory = 0x00400000;
+        int line, i = 0;
 
 
-
-        List<int> labes;
+        Dictionary<string,int> labes;
 
         List<Instruction> ınstructions;
 
@@ -37,7 +38,8 @@ namespace Mars_Mips_Simulator
             this.validation = new Validate();
             this.func = new Function();
             ınstructions = new List<Instruction>();
-            this.labes = new List<int>();
+            this.ra = registerdb.getRegister("$ra");
+            this.labes = new Dictionary<string, int>();
             this.pc = registerdb.getRegister("$pc");
             InitializeComponent();
 
@@ -100,6 +102,8 @@ namespace Mars_Mips_Simulator
 
         private void button2_Click(object sender, EventArgs e)
         {
+            labes.Clear();
+      
             this.richTextBox1.Clear();
             this.registerdb = new RegisterDb();
             this.listView1.Items.Clear();
@@ -126,9 +130,9 @@ namespace Mars_Mips_Simulator
             try
             {
 
-                for (int i = 0; i <= ınstructions.Count; i++)
+                while (i <= ınstructions.Count)
                 {
-                    if (ınstructions[i].data.Contains("Exit")) { break; }
+                    if (ınstructions[i].data.Contains("exit")) { break; }
 
                     string mainText = richTextBox1.Lines[i];
                     string[] arraay = mainText.Split(" ");
@@ -138,13 +142,33 @@ namespace Mars_Mips_Simulator
 
                     string[] variableList = variables.Split(",");
 
+
                     foreach (var item in labes)
                     {
-                        if (functionName == "j")
+
+                        if (functionName == "j" && item.Key==variableList[0])
                         {
-                            pc.value =(item + 4).ToString("X");
+                            labes.Remove(item.Key);
+                            pc.value =(item.Value + 4).ToString("X");
                      
                         }
+                        else if (functionName == "jal" || functionName == "jalr")
+                        {
+                            ra.value = (Convert.ToInt32(pc.value, 16)).ToString("X");
+                            listView1.Items[31].SubItems[2].Text = ra.value;
+                            line = i;
+                            Console.WriteLine(item);
+                            pc.value = (item.Value + 4).ToString("X");
+                        }
+
+
+
+                        else
+                        {
+                            continue;
+                        }
+                   
+
                     }
 
 
@@ -154,11 +178,14 @@ namespace Mars_Mips_Simulator
                     {
 
                         result = registerdb.getRegisters().Where(p => p.name == variableList[0]).First();
-
-                        if (variableList[1].Substring(0, 1) == "$")
+                        if (variableList.Length > 1)
                         {
-                            v1 = registerdb.getRegisters().Where(p => p.name == variableList[1]).First();
+                            if (variableList[1].Substring(0, 1) == "$")
+                            {
+                                v1 = registerdb.getRegisters().Where(p => p.name == variableList[1]).First();
+                            }
                         }
+                        
 
                         if (variableList.Length > 2)
                         {
@@ -177,15 +204,16 @@ namespace Mars_Mips_Simulator
 
 
 
-
+                    i++;
 
                 }
+
                 this.listView1.Items.Clear();
                 this.listView2.Items.Clear();
                 showAllRegister();
                 showAllData();
                 ınstructions.Clear();
-            
+
 
             }
             catch(Exception ex)
@@ -203,13 +231,18 @@ namespace Mars_Mips_Simulator
 
         public void createInstruction( )
         {
-
+          
+           
             for (int i = 0; i < richTextBox1.Lines.Length; i++)
             {
+
+                string[] variableList = string.Join("", richTextBox1.Lines[i].Split(" ").Skip(1).ToArray()).Split(",");
                 if (string.IsNullOrEmpty(richTextBox1.Lines[i]))
                 {
                     continue;
                 }
+              
+             
                 else
                 {
 
@@ -217,7 +250,7 @@ namespace Mars_Mips_Simulator
                     this.ınstructions.Add(new Instruction(richTextBox1.Lines[i], val));
                     if (richTextBox1.Lines[i].Contains(":"))
                     {
-                        labes.Add(val);
+                        labes.Add(richTextBox1.Lines[i].Substring(0,richTextBox1.Lines[i].Length-1), val);
                     }
 
 
@@ -235,6 +268,9 @@ namespace Mars_Mips_Simulator
             {
                 switch (functionName)
                 {
+
+
+
                     case "addi":
                     case "add":
 
@@ -348,6 +384,7 @@ namespace Mars_Mips_Simulator
                         listView1.Items[int.Parse(result.number)].SubItems[2].Text = result.value;
 
                         break;
+                    case "sra":
                     case "srl":
                         try
                         {
@@ -376,6 +413,54 @@ namespace Mars_Mips_Simulator
                         listView1.Items[int.Parse(result.number)].SubItems[2].Text = result.value;
                         break;
 
+                    case "beq":
+                        string val;
+                        try
+                        {
+                            val = this.func.beq(result.value, variableList[1]);
+
+                        }
+                        catch
+                        {
+                            val = this.func.beq(result.value,v1.value);
+                        }
+
+                        if (val== "1")
+                        {
+                            foreach (var item in labes)
+                            {
+                                labes.Remove(item.Key);
+                                pc.value = (item.Value ).ToString("X");
+                            }    
+                          
+
+                        }
+                        break;
+                    case "bne":
+             
+                        try
+                        {
+                            val = this.func.bne(result.value, variableList[1]);
+
+                        }
+                        catch
+                        {
+                            val = this.func.bne(result.value, v1.value);
+                        }
+
+                        if (val == "1")
+                        {
+                            foreach (var item in labes)
+                            {
+                                labes.Remove(item.Key);
+                                pc.value = (item.Value).ToString("X");
+                            }
+
+
+                        }
+
+                        break;
+
                     case "lw":
                         string offset = variableList[1].Split("(")[0];
                         string base1 = variableList[1].Split("(")[1].Split(")")[0];
@@ -400,8 +485,24 @@ namespace Mars_Mips_Simulator
 
                         break;
 
+                    case "jr":
+
+                        pc.value = ra.value;
+                        listView1.Items[31].SubItems[2].Text = "0x00000000";
+                        if (ra.value == "0x00000000")
+                        {
+                            i = 9999999;
+                        }
+                        else
+                        {
+                            i = line;
+                        }
+
+
+                        ra.value = "0x00000000";
 
                         break;
+
 
                     case "j":
                        

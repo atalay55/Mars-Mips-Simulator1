@@ -114,6 +114,53 @@ namespace Mars_Mips_Simulator
 
         }
 
+        public string beq(string num1, string num2)
+        {
+
+            int number;
+            if (int.TryParse(num2, System.Globalization.NumberStyles.HexNumber, null, out number))
+            {
+                return (Convert.ToInt32(num1, 16) == (int.Parse(num2)) ? 1 : 0).ToString();
+
+            }
+            else if (int.TryParse(num2, System.Globalization.NumberStyles.HexNumber, null, out number) && int.TryParse(num1, System.Globalization.NumberStyles.HexNumber, null, out number))
+            {
+                return ((int.Parse(num1)) == (int.Parse(num2)) ? 1 : 0).ToString();
+            }
+            else
+            {
+                Console.WriteLine(num1);
+                Console.WriteLine(num2);
+
+                return ((Convert.ToInt32(num2, 16) == Convert.ToInt32(num1, 16))? 1 : 0).ToString();
+            }
+
+
+
+        }
+        public string bne(string num1, string num2)
+        {
+
+            int number;
+            if (int.TryParse(num2, System.Globalization.NumberStyles.HexNumber, null, out number))
+            {
+                return (Convert.ToInt32(num1, 16) != (int.Parse(num2)) ? 1 : 0).ToString();
+
+            }
+            else if (int.TryParse(num2, System.Globalization.NumberStyles.HexNumber, null, out number) && int.TryParse(num1, System.Globalization.NumberStyles.HexNumber, null, out number))
+            {
+                return ((int.Parse(num1)) != (int.Parse(num2)) ? 1 : 0).ToString();
+            }
+            else
+            {
+
+                return ((Convert.ToInt32(num2, 16) != Convert.ToInt32(num1, 16)) ? 1 : 0).ToString();
+            }
+
+
+
+        }
+
 
         public string mul(string num1, string num2)
         {
