@@ -162,7 +162,7 @@ namespace Mars_Mips_Simulator
         }
 
 
-        public string mul(string num1, string num2)
+        public string mult(string num1, string num2)
         {
 
 
@@ -182,6 +182,26 @@ namespace Mars_Mips_Simulator
                 return (Convert.ToInt32(num2, 16) * Convert.ToInt32(num1, 16)).ToString();
             }
 
+
+        }
+
+        public string lui(string registerName, string num2)
+        {
+            
+        
+
+            int number;
+            if (int.TryParse(num2, System.Globalization.NumberStyles.HexNumber, null, out number))
+            {
+                num2 = "0x"+int.Parse(num2).ToString("x");
+              return num2;
+                
+               
+
+            }
+
+
+            return num2; 
 
         }
 
@@ -223,7 +243,7 @@ namespace Mars_Mips_Simulator
             else
             {
 
-                return (Convert.ToInt32(num2, 16) < Convert.ToInt32(num1, 16)) ? "1" : "0";
+                return (Convert.ToInt32(num1, 16) < Convert.ToInt32(num2, 16)) ? "1" : "0";
             }
 
         }
@@ -282,9 +302,9 @@ namespace Mars_Mips_Simulator
                 string addressint = (Convert.ToInt64(num1, 16) + (int.Parse(num2))).ToString();
                 string addresHex = "0x" + int.Parse(addressint).ToString("X");
 
-                this.result = this.dataDb.getData().Where(p => Convert.ToInt32(p.adress, 16) == Convert.ToInt32(addresHex, 16)).First();
+                //this.result = this.dataDb.getData().Where(p => Convert.ToInt32(p.adress, 16) == Convert.ToInt32(addresHex, 16)).First();
 
-                return (result.value0);
+                return (addresHex);
 
             }
             else
@@ -309,23 +329,48 @@ namespace Mars_Mips_Simulator
             {
                 string addressint = (Convert.ToInt64(num1, 16) + (int.Parse(num2))).ToString();
                 string addresHex = "0x" + int.Parse(addressint).ToString("X");
-                this.result = this.dataDb.getData().Where(p => Convert.ToInt32(p.adress, 16) == Convert.ToInt32(addresHex, 16)).First();
+               // this.result = this.dataDb.getData().Where(p => Convert.ToInt32(p.adress, 16) == Convert.ToInt32(addresHex, 16)).First();
 
-                return (result.number);
+                return (addresHex);
 
             }
             else
             {
                 string addressint = (Convert.ToInt64(num2, 16) + Convert.ToInt64(num1, 16)).ToString();
                 string addresHex = "0x" + int.Parse(addressint).ToString("X");
-                this.result = this.dataDb.getData().Where(p => Convert.ToInt32(p.adress, 16) == Convert.ToInt32(addresHex, 16)).First();
+               // this.result = this.dataDb.getData().Where(p => Convert.ToInt32(p.adress, 16) == Convert.ToInt32(addresHex, 16)).First();
 
-                return (result.number);
+                return (addresHex);
             }
 
 
         }
+        public string sb(string num1, string num2)
+        {
 
+            int number;
+            if (int.TryParse(num2, System.Globalization.NumberStyles.HexNumber, null, out number))
+            {
+              
+                string addressint = (Convert.ToInt64(num1, 16) + (int.Parse(num2))).ToString();
+           
+                 string addresHex = "0x" + int.Parse(addressint).ToString("X");
+                // this.result = this.dataDb.getData().Where(p => Convert.ToInt32(p.adress, 16) == Convert.ToInt32(addresHex, 16)).First();
+
+                return (addresHex);
+
+            }
+            else
+            {
+                string addressint = (Convert.ToInt64(num2, 16) + Convert.ToInt64(num1, 16)).ToString();
+                string addresHex = "0x" + int.Parse(addressint).ToString("X");
+                // this.result = this.dataDb.getData().Where(p => Convert.ToInt32(p.adress, 16) == Convert.ToInt32(addresHex, 16)).First();
+
+                return (addresHex);
+            }
+
+
+        }
 
     }
 }

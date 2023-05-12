@@ -44,8 +44,8 @@ namespace Mars_Mips_Simulator
             this.Value3 = new System.Windows.Forms.ColumnHeader();
             this.listView3 = new System.Windows.Forms.ListView();
             this.inst = new System.Windows.Forms.ColumnHeader();
-            this.code = new System.Windows.Forms.ColumnHeader();
             this.Instructi = new System.Windows.Forms.ColumnHeader();
+            this.code = new System.Windows.Forms.ColumnHeader();
             this.SuspendLayout();
             // 
             // listView1
@@ -54,11 +54,11 @@ namespace Mars_Mips_Simulator
             this.name,
             this.number,
             this.value});
+            this.listView1.FullRowSelect = true;
             this.listView1.GridLines = true;
             this.listView1.HideSelection = false;
             this.listView1.Location = new System.Drawing.Point(1043, 22);
             this.listView1.Name = "listView1";
-            this.listView1.Scrollable = false;
             this.listView1.Size = new System.Drawing.Size(331, 750);
             this.listView1.TabIndex = 0;
             this.listView1.UseCompatibleStateImageBehavior = false;
@@ -87,7 +87,7 @@ namespace Mars_Mips_Simulator
             this.richTextBox1.Size = new System.Drawing.Size(744, 515);
             this.richTextBox1.TabIndex = 1;
             this.richTextBox1.Text = "";
-            this.richTextBox1.TextChanged += new System.EventHandler(this.richTextBox1_TextChanged);
+   
             // 
             // button1
             // 
@@ -180,17 +180,17 @@ namespace Mars_Mips_Simulator
             this.inst.Text = "Instruction Memory";
             this.inst.Width = 200;
             // 
-            // code
-            // 
-            this.code.Text = "Code ";
-            this.code.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.code.Width = 300;
-            // 
             // Instructi
             // 
             this.Instructi.Text = "Instruction hex";
             this.Instructi.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.Instructi.Width = 120;
+            // 
+            // code
+            // 
+            this.code.Text = "Code ";
+            this.code.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.code.Width = 300;
             // 
             // HomeForm
             // 

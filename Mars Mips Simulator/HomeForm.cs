@@ -37,7 +37,7 @@ namespace Mars_Mips_Simulator
             this.datadb = new DataDb();
             this.validation = new Validate();
             this.func = new Function();
-            ınstructions = new List<Instruction>();
+            this.ınstructions = new List<Instruction>();
             this.ra = registerdb.getRegister("$ra");
             this.labes = new Dictionary<string, int>();
             this.pc = registerdb.getRegister("$pc");
@@ -66,7 +66,7 @@ namespace Mars_Mips_Simulator
 
         private void showAllRegister()
         {
-            foreach (Register s in registerdb.getRegisters())
+            foreach (Register s in this.registerdb.getRegisters())
             {
 
                 this.item = new ListViewItem(s.name);
@@ -131,14 +131,11 @@ namespace Mars_Mips_Simulator
 
         }
 
-        private void richTextBox1_TextChanged(object sender, EventArgs e)
-        {
-             
 
-        }
 
         private void button1_Click(object sender, EventArgs e)
         {
+            this.i = 0;
             this.listView2.Visible = true;
             this.richTextBox1.Visible = false;
             this.listView3.Visible = true;
@@ -164,13 +161,13 @@ namespace Mars_Mips_Simulator
                     foreach (var item in labes)
                     {
 
-                        if (functionName == "j" && item.Key==variableList[0])
+                        if (functionName == "j" && item.Key == variableList[0] && Convert.ToInt32(pc.value, 16) <= ınstructions[i].insMemory)
                         {
                             labes.Remove(item.Key);
                             pc.value =(item.Value + 4).ToString("X");
                      
                         }
-                        else if (functionName == "jal" || functionName == "jalr")
+                        else if (functionName == "jal" && item.Key.Trim(':') == variableList[0])
                         {
                             ra.value = (Convert.ToInt32(pc.value, 16)).ToString("X");
                             listView1.Items[31].SubItems[2].Text = ra.value;
@@ -226,7 +223,7 @@ namespace Mars_Mips_Simulator
 
                 }
 
-                //ınstructions.Clear();
+             
 
 
             }
@@ -243,8 +240,7 @@ namespace Mars_Mips_Simulator
             showAllRegister();
             showAllData();
             showAllInstruc();
-
-
+            this.ınstructions.Clear();
 
 
         }
@@ -324,7 +320,7 @@ namespace Mars_Mips_Simulator
                         }
 
 
-                        result.value = "0x" + int.Parse(result.value).ToString("D8");
+                        result.value = "0x" + int.Parse(result.value).ToString("x");
                         listView1.Items[int.Parse(result.number)].SubItems[2].Text = result.value;
 
                         break;
@@ -341,7 +337,7 @@ namespace Mars_Mips_Simulator
                         }
 
 
-                        result.value = "0x" + int.Parse(result.value).ToString("D8");
+                        result.value = "0x" + int.Parse(result.value).ToString("x");
 
                         listView1.Items[int.Parse(result.number)].SubItems[2].Text = result.value;
 
@@ -358,32 +354,52 @@ namespace Mars_Mips_Simulator
                             result.value = this.func.delete(v1.value, v2.value);
 
                         }
-                        result.value = "0x" + int.Parse(result.value).ToString("D8");
+                        result.value = "0x" + int.Parse(result.value).ToString("x");
                         listView1.Items[int.Parse(result.number)].SubItems[2].Text = result.value;
 
                         break;
-                    case "mul":
-                    case "muli":
-
+                    case "mult":
                         try
                         {
-                            result.value = this.func.mul(v1.value, variableList[2]);
+                            Console.WriteLine(429496729 > int.Parse(func.mult(result.value, variableList[1])));
+                            if ( 4294967295 > double.Parse(func.mult(result.value, variableList[1])))
+                            {
+                                registerdb.getRegister("$lo").value = "0x" + this.func.mult(result.value, variableList[1]);
+                            }
+                            else if (429496729 < int.Parse(func.mult(result.value, v1.value)))
+                            {
+                                registerdb.getRegister("$hi").value = (double.Parse(func.mult(result.value, variableList[1])) - 4294967295).ToString("x");
+                            }
+                           
 
                         }
                         catch
                         {
-                            result.value = this.func.mul(v1.value, v2.value);
+                            
+                           
+                            Console.WriteLine(func.mult(result.value, v1.value));
+                            if (4294967296 > int.Parse(func.mult(result.value, v1.value))) 
+                            {
+                                registerdb.getRegister("$lo").value = "0x" + (int.Parse(this.func.mult(result.value, v1.value))).ToString("x");
+                            }
+                           
+                            else 
+                            {
+                                
+                                registerdb.getRegister("$hi").value = (int.Parse(func.mult(result.value, v1.value)) - 4294967295).ToString("x");
+                            }
+                            
 
                         }
-                        result.value = "0x" + int.Parse(result.value).ToString("D8");
-                        listView1.Items[int.Parse(result.number)].SubItems[2].Text = result.value;
+                      
+
                         break;
 
 
                     case "xor":
 
                         result.value = this.func.xor(v1.value, v2.value);
-                        result.value = "0x" + int.Parse(result.value).ToString("D8");
+                        result.value = "0x" + int.Parse(result.value).ToString("x");
                         listView1.Items[int.Parse(result.number)].SubItems[2].Text = result.value;
 
                         break;
@@ -399,7 +415,7 @@ namespace Mars_Mips_Simulator
                         {
                             result.value = this.func.stl(v1.value, v2.value);
                         }
-                        result.value = "0x" + int.Parse(result.value).ToString("D8");
+                        result.value = "0x" + int.Parse(result.value).ToString("x");
 
                         listView1.Items[int.Parse(result.number)].SubItems[2].Text = result.value;
 
@@ -415,7 +431,7 @@ namespace Mars_Mips_Simulator
                         {
                             result.value = this.func.srl(v1.value, v2.value);
                         }
-                        result.value = "0x" + int.Parse(result.value).ToString("D8");
+                        result.value = "0x" + int.Parse(result.value).ToString("x");
                         listView1.Items[int.Parse(result.number)].SubItems[2].Text = result.value;
                         break;
 
@@ -429,7 +445,7 @@ namespace Mars_Mips_Simulator
                         {
                             result.value = this.func.sll(v1.value, v2.value);
                         }
-                        result.value = "0x" + int.Parse(result.value).ToString("D8");
+                        result.value = "0x" + int.Parse(result.value).ToString("x");
                         listView1.Items[int.Parse(result.number)].SubItems[2].Text = result.value;
                         break;
 
@@ -480,7 +496,25 @@ namespace Mars_Mips_Simulator
                         }
 
                         break;
+                    case "lui":
+                        result = registerdb.getRegisters().Where(p => p.name == variableList[0]).First();
+                        result.value = func.lui(variableList[0], variableList[1]);
+                        listView1.Items[int.Parse(result.number)].SubItems[2].Text = result.value;
 
+                        break;
+                    case "mflo":
+
+                        registerdb.getRegister(result.name).value = registerdb.getRegister("$lo").value;
+                        listView1.Items[int.Parse("34")].SubItems[2].Text = "0x" + registerdb.getRegister("$lo").value;
+
+                        break;
+                    case "mfhi":
+
+
+                        registerdb.getRegister(result.name).value = registerdb.getRegister("$hi").value;
+                        listView1.Items[int.Parse("33")].SubItems[2].Text = "0x" + registerdb.getRegister("hi").value;
+                        break;
+                  
                     case "lw":
                         string offset = variableList[1].Split("(")[0];
                         string base1 = variableList[1].Split("(")[1].Split(")")[0];
@@ -494,16 +528,78 @@ namespace Mars_Mips_Simulator
 
                         break;
 
+                    case "lb":
+                         offset = variableList[1].Split("(")[0];
+                         base1 = variableList[1].Split("(")[1].Split(")")[0];
+                        baseRegister = registerdb.getRegisters().Where(p => p.name == base1).First();
+                        //result.value = this.func.lw(baseRegister.value, offset);
+                         address = this.func.lw(baseRegister.value, offset);
+                        if (256 > int.Parse(address))
+                        {
+                            MessageBox.Show("Data error");
+                            break;
+                        }
+                         dataValue = datadb.getData().Where(p => Convert.ToInt32(p.adress, 16) == Convert.ToInt32(address, 16)).First().value0;
+                        registerdb.assignValue(result, dataValue);
+                        //result.value = "0x" + int.Parse(result.value).ToString("X");
+                        listView1.Items[int.Parse(result.number)].SubItems[2].Text = dataValue;
+
+                        break;
+
                     case "sw":
+
+                        Data resultData;
                         string offset1 = variableList[1].Split("(")[0];
                         string base2 = variableList[1].Split("(")[1].Split(")")[0];
                         baseRegister = registerdb.getRegisters().Where(p => p.name == base2).First();
-                        string number = this.func.sw(baseRegister.value, offset1);
-                        //result.value = "0x" + int.Parse(result.value).ToString("X");
-                        datadb.setValue(number, result.value);
-                        listView2.Items[int.Parse(number)].SubItems[1].Text = result.value;
-
+                        string addressHex = this.func.sw(baseRegister.value, offset1);
+                        if (256 > int.Parse(addressHex))
+                        {
+                            MessageBox.Show("Data error");
+                            break;
+                        }
+                        try
+                        {
+                            resultData = this.datadb.getData().Where(p => Convert.ToInt32(p.adress, 16) == Convert.ToInt32(addressHex, 16)).First();
+                            datadb.setValue(resultData.number, result.value);
+                            listView2.Items[int.Parse(resultData.number)].SubItems[1].Text = result.value;
+                        }
+                        catch
+                        {
+                            resultData = datadb.createData("35", result.value, addressHex);
+                            string[] row = { result.value, addressHex, "0x0000000", "0x0000000", "0x0000000" };
+                            var satır = new ListViewItem(row);
+                            listView2.Items.Add(satır);
+                        }
                         break;
+                    case "sb":
+
+                    
+                         offset1 = variableList[1].Split("(")[0];
+                         base2 = variableList[1].Split("(")[1].Split(")")[0];
+                        baseRegister = registerdb.getRegisters().Where(p => p.name == base2).First();
+                         addressHex = this.func.sw(baseRegister.value, offset1);
+                        if (256 > int.Parse(addressHex))
+                        {
+                            MessageBox.Show("Data error");
+                            break;
+                        }
+                        try
+                        {
+                            resultData = this.datadb.getData().Where(p => Convert.ToInt32(p.adress, 16) == Convert.ToInt32(addressHex, 16)).First();
+                            datadb.setValue(resultData.number, result.value);
+                            listView2.Items[int.Parse(resultData.number)].SubItems[1].Text = result.value;
+                        }
+                        catch
+                        {
+                            resultData = datadb.createData("35", result.value, addressHex);
+                            string[] row = { result.value, addressHex, "0x0000000", "0x0000000", "0x0000000" };
+                            var satır = new ListViewItem(row);
+                            listView2.Items.Add(satır);
+                        }
+                        break;
+
+
 
                     case "jr":
 

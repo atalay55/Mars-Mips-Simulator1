@@ -7,8 +7,10 @@ namespace Mars_Mips_Simulator.DataBase
 {
     class RegisterDb
     {
-
-        List<Register> registers = new List<Register>() {
+        List<Register> registers;
+        public RegisterDb()
+        {
+            registers = new List<Register>() {
             new Register("$zero","0","0x00000000"),
             new Register("$at","1","0x00000000"),
             new Register("$v0","2","0x00000000"),
@@ -41,11 +43,15 @@ namespace Mars_Mips_Simulator.DataBase
             new Register("$sp","29","0x00000000"),
             new Register("$fp","30","0x00000000"),
             new Register("$ra","31","0x00000000"),
-            new Register("$pc","","0x00000000"),
-            new Register("$hi","","0x00000000"),
-            new Register("$lo","","0x00000000"),
+            new Register("$pc","32","0x00000000"),
+            new Register("$hi","33","0x00000000"),
+            new Register("$lo","34","0x00000000"),
 
         };
+
+        }
+
+      
 
         public List<Register> getRegisters()
         {
@@ -53,16 +59,17 @@ namespace Mars_Mips_Simulator.DataBase
         }
         public Register getRegister(string registerName)
         {
-           return registers.Where(p => p.name == registerName).First();
+           return this.registers.Where(p => p.name == registerName).First();
         }
         public void changeValue( Register r)
         {
-             registers.Where(p => p.name == r.name ).First().value=r.value;
+             this.registers.Where(p => p.name == r.name ).First().value=r.value;
         }
         public void assignValue(Register r , string registerValue)
         {
-            registers.Where(p => p.name == r.name).First().value = registerValue;
+            this.registers.Where(p => p.name == r.name).First().value = registerValue;
         }
+      
 
     }
 }

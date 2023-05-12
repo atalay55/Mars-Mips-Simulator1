@@ -36,6 +36,11 @@ namespace Mars_Mips_Simulator.DataBase
 
            data.Where(p => p.number == num).First().value0 = value;
         }
+        public Data createData(string num, string value, string address)
+        {
+            data.Add(new Data(num, address, value, "0x0000000", "0x0000000", "0x0000000"));
+            return (data.Where(p => p.number == num).First());
+        }
     }
 
   
