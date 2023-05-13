@@ -64,7 +64,7 @@ namespace Mars_Mips_Simulator
             else
             {
 
-                return (Convert.ToInt32(num2, 16) - (int.Parse(num1))).ToString();
+                return (Convert.ToInt32(num2, 16) - (Convert.ToInt32(num1,16))).ToString();
             }
 
 
@@ -374,6 +374,16 @@ namespace Mars_Mips_Simulator
             }
 
 
+        }
+        public string rtypeCode(Register rs, Register  rt, Register rd )
+        {
+
+            return Convert.ToString(int.Parse(rs.number), 2).PadLeft(5, '0') + Convert.ToString(int.Parse(rt.number), 2).PadLeft(5, '0') + Convert.ToString(int.Parse(rd.number), 2).PadLeft(5, '0')+"00000";
+        }
+        public string itypeCode(Register rs, Register rt, string imm)
+        {
+
+            return Convert.ToString(int.Parse(rs.number), 2).PadLeft(5, '0') + Convert.ToString(int.Parse(rt.number), 2).PadLeft(5, '0') + Convert.ToString(int.Parse(imm), 2).PadLeft(16, '0') ;
         }
 
     }

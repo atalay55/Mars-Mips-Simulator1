@@ -45,7 +45,8 @@ namespace Mars_Mips_Simulator
             this.listView3 = new System.Windows.Forms.ListView();
             this.inst = new System.Windows.Forms.ColumnHeader();
             this.Instructi = new System.Windows.Forms.ColumnHeader();
-            this.code = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+            this.text = new System.Windows.Forms.ColumnHeader();
             this.SuspendLayout();
             // 
             // listView1
@@ -87,7 +88,6 @@ namespace Mars_Mips_Simulator
             this.richTextBox1.Size = new System.Drawing.Size(744, 515);
             this.richTextBox1.TabIndex = 1;
             this.richTextBox1.Text = "";
-   
             // 
             // button1
             // 
@@ -163,13 +163,14 @@ namespace Mars_Mips_Simulator
             this.listView3.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.inst,
             this.Instructi,
-            this.code});
+            this.columnHeader1,
+            this.text});
             this.listView3.FullRowSelect = true;
             this.listView3.GridLines = true;
             this.listView3.HideSelection = false;
             this.listView3.Location = new System.Drawing.Point(27, 22);
             this.listView3.Name = "listView3";
-            this.listView3.Size = new System.Drawing.Size(621, 515);
+            this.listView3.Size = new System.Drawing.Size(744, 515);
             this.listView3.TabIndex = 5;
             this.listView3.UseCompatibleStateImageBehavior = false;
             this.listView3.View = System.Windows.Forms.View.Details;
@@ -178,7 +179,7 @@ namespace Mars_Mips_Simulator
             // inst
             // 
             this.inst.Text = "Instruction Memory";
-            this.inst.Width = 200;
+            this.inst.Width = 120;
             // 
             // Instructi
             // 
@@ -186,11 +187,17 @@ namespace Mars_Mips_Simulator
             this.Instructi.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.Instructi.Width = 120;
             // 
-            // code
+            // columnHeader1
             // 
-            this.code.Text = "Code ";
-            this.code.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.code.Width = 300;
+            this.columnHeader1.Text = "code";
+            this.columnHeader1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.columnHeader1.Width = 200;
+            // 
+            // text
+            // 
+            this.text.Text = "Source";
+            this.text.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.text.Width = 300;
             // 
             // HomeForm
             // 
@@ -227,7 +234,8 @@ namespace Mars_Mips_Simulator
         private System.Windows.Forms.ColumnHeader Value3;
         private System.Windows.Forms.ListView listView3;
         private System.Windows.Forms.ColumnHeader inst;
-        private System.Windows.Forms.ColumnHeader code;
+        private System.Windows.Forms.ColumnHeader text;
         private System.Windows.Forms.ColumnHeader Instructi;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
     }
 }
