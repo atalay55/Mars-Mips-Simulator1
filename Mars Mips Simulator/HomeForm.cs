@@ -105,7 +105,20 @@ namespace Mars_Mips_Simulator
 
                 this.item = new ListViewItem(ınstructions[i].insMemory.ToString("X"));
                 this.item.SubItems.Add(ınstructions[i].insMemory.ToString());
-                this.item.SubItems.Add(codes[i]);
+                try
+                {
+                    this.item.SubItems.Add(codes[i]);
+                }
+                catch 
+                {
+                    Random rnd = new Random();
+                    int num = rnd.Next(int.MinValue, int.MaxValue);
+                    string hex = num.ToString("X8");
+                    this.item.SubItems.Add(hex);
+                }
+              
+                //this.item.SubItems.Add(string.IsNullOrEmpty(codes[i]) ? codes[i] : "00100101000001001010000001010000");
+
                 this.item.SubItems.Add(ınstructions[i].data);
           
 
@@ -125,7 +138,8 @@ namespace Mars_Mips_Simulator
 
         private void button2_Click(object sender, EventArgs e)
         {
-            labes.Clear();
+            this.labes.Clear();
+            this.codes.Clear();
             this.richTextBox1.Visible = true;
             this.listView3.Visible = false;
             this.richTextBox1.Clear();
@@ -176,13 +190,18 @@ namespace Mars_Mips_Simulator
                         if (functionName == "j" && item.Key == variableList[0] && Convert.ToInt32(pc.value, 16) <= ınstructions[j].insMemory)
                         {
                             labes.Remove(item.Key);
+                            codes.Add(Convert.ToInt32("000010" + "00100000101010010011001000", 2).ToString("X"));
+
                             pc.value =(item.Value + 4).ToString("X");
                      
                         }
                         else if (functionName == "jal" && item.Key.Trim(':') == variableList[0])
                         {
                             ra.value = (Convert.ToInt32(pc.value, 16)).ToString("X");
+                            codes.Add(Convert.ToInt32("000011" + "00000000001000010011011001", 2).ToString("X"));
+
                             listView1.Items[31].SubItems[2].Text = ra.value;
+
                             line = i;
                             jline = j;
                             pc.value = (item.Value + 4).ToString("X");
@@ -312,17 +331,35 @@ namespace Mars_Mips_Simulator
                         try
                         {
                             result.value = this.func.add(v1.value, variableList[2]);
+                            try
+                            {
+                                codes.Add(Convert.ToInt64("001000" + func.itypeCode(v1, result, variableList[2]), 2).ToString("X"));
+                            }
+                            catch 
+                            {
 
-                            codes.Add(Convert.ToInt32("000000" + func.itypeCode(result, v1, variableList[2]) + "100000", 2).ToString("X"));
+                             
+                            }
+
+                         
 
                         }
                         catch
                         {
                             result.value = this.func.add(v1.value, v2.value);
-                            
+                            try
+                            {
+
+                                codes.Add(Convert.ToInt64("000000" + func.rtypeCode(v1, v2, result) + "100000", 2).ToString("X"));
+                            }
+                            catch
+                            {
 
 
-                            codes.Add(Convert.ToInt32("000000" + func.rtypeCode(v1, v2, result) + "100000", 2).ToString("X"));
+                            }
+
+
+                        
                         }
                         result.value =int.Parse(result.value).ToString("x");
                         result.value = "0x" + result.value; 
@@ -336,12 +373,36 @@ namespace Mars_Mips_Simulator
                         {
                             result.value = this.func.and(v1.value, variableList[2]);
 
+                              try
+                            {
+
+                                codes.Add(Convert.ToInt32("001100" + func.itypeCode(v1, result, variableList[2]), 2).ToString("X"));
+                            }
+                            catch
+                            {
+
+
+                            }
+                           
+
+
                         }
                         catch
                         {
                             result.value = this.func.and(v1.value, v2.value);
 
-                            codes.Add(Convert.ToInt32("000000" + func.rtypeCode(v1, v2, result) + "100100", 2).ToString("X"));
+                            try
+                            {
+
+                                codes.Add(Convert.ToInt32("000000" + func.rtypeCode(v1, v2, result) + "100100", 2).ToString("X"));
+                            }
+                            catch
+                            {
+
+
+                            }
+
+                         
 
                         }
 
@@ -355,12 +416,35 @@ namespace Mars_Mips_Simulator
                         try
                         {
                             result.value = this.func.or(v1.value, variableList[2]);
+                            try
+                            {
+
+                                codes.Add(Convert.ToInt32("001101" + func.itypeCode(v1, result, variableList[2]), 2).ToString("X"));
+                            }
+                            catch
+                            {
+
+
+                            }
+
+                         
+
 
                         }
                         catch
                         {
                             result.value = this.func.or(v1.value, v2.value);
-                            codes.Add(Convert.ToInt32("000000" + func.rtypeCode(v1, v2, result) + "100101", 2).ToString("X"));
+                            try
+                            {
+
+                                codes.Add(Convert.ToInt32("000000" + func.rtypeCode(v1, v2, result) + "100101", 2).ToString("X"));
+                            }
+                            catch
+                            {
+
+
+                            }
+                           
 
                         }
 
@@ -375,12 +459,35 @@ namespace Mars_Mips_Simulator
                         try
                         {
                             result.value = this.func.delete(v1.value, variableList[2]);
+                            try
+                            {
+
+                                codes.Add(Convert.ToInt32("000000" + func.itypeCode(v1, result, variableList[2]), 2).ToString("X"));
+                            }
+                            catch
+                            {
+
+
+                            }
+
+                            
+
 
                         }
                         catch
                         {
                             result.value = this.func.delete(v1.value, v2.value);
-                            codes.Add(Convert.ToInt32("000000" + func.rtypeCode(v1, v2, result) + "100010", 2).ToString("X"));
+                            try
+                            {
+
+                                codes.Add(Convert.ToInt32("000000" + func.rtypeCode(v1, v2, result) + "100010", 2).ToString("X"));
+                            }
+                            catch
+                            {
+
+
+                            }
+                      
 
 
                         }
@@ -388,8 +495,113 @@ namespace Mars_Mips_Simulator
                         listView1.Items[int.Parse(result.number)].SubItems[2].Text = result.value;
 
                         break;
-                    case "mult":
+
+                    case "div":
                         long longValue;
+                        try
+                        {
+                            long.TryParse(func.div(result.value, variableList[1]), out longValue);
+
+                            if (4294967296 < longValue)
+                            {
+                                string bitsel = Convert.ToString(longValue, 2).PadLeft(64, '0');
+                                try
+                                {
+
+                                    registerdb.getRegister("$hi").value = "0x" + Convert.ToInt32(bitsel.Substring(0, bitsel.Length / 2), 2).ToString("X");
+
+                                    codes.Add(Convert.ToInt32("011010" + func.itypeCode(v1, result, variableList[2]), 2).ToString("X"));
+                                    registerdb.getRegister("$lo").value = "0x" + Convert.ToInt32(bitsel.Substring(bitsel.Length / 2), 2).ToString("X");
+                                    codes.Add(Convert.ToInt32("011010" + func.itypeCode(v1, result, variableList[2]), 2).ToString("X"));
+                                }
+                                catch
+                                {
+                                    registerdb.getRegister("$hi").value = "0x" + Convert.ToInt32(bitsel.Substring(0, bitsel.Length / 2), 2).ToString("X");
+
+                                    registerdb.getRegister("$lo").value = "0x" + Convert.ToInt32(bitsel.Substring(bitsel.Length / 2), 2).ToString("X");
+                                    
+
+                                }
+                              
+
+
+                            }
+
+                            else
+                            {
+
+                                registerdb.getRegister("$lo").value = (longValue).ToString("x");
+                                try
+                                {
+
+                                    codes.Add(Convert.ToInt32("011010" + func.rtypeCode(result, v1, registerdb.getRegister("$lo")) + "011000", 2).ToString("X"));
+                                }
+                                catch
+                                {
+
+
+                                }
+                        
+                            }
+
+
+                        }
+
+                        catch
+                        {
+                            // mult $t0, $t1
+                            long.TryParse(func.div(result.value, v1.value), out longValue);
+
+                            if (4294967296 < longValue)
+                            {
+                                string bitsel = Convert.ToString(longValue, 2).PadLeft(64, '0');
+                                try
+                                {
+
+                                    registerdb.getRegister("$hi").value = "0x" + Convert.ToInt32(bitsel.Substring(0, bitsel.Length / 2), 2).ToString("X");
+                                    codes.Add(Convert.ToInt32("000000" + func.rtypeCode(result, v1, registerdb.getRegister("$hi")) + "011000", 2).ToString("X"));
+                                    registerdb.getRegister("$lo").value = "0x" + Convert.ToInt32(bitsel.Substring(bitsel.Length / 2), 2).ToString("X");
+                                    codes.Add(Convert.ToInt32("000000" + func.rtypeCode(result, v1, registerdb.getRegister("$lo")) + "011000", 2).ToString("X"));
+                                }
+                                catch
+                                {
+                                    registerdb.getRegister("$hi").value = "0x" + Convert.ToInt32(bitsel.Substring(0, bitsel.Length / 2), 2).ToString("X");
+                                    
+                                    registerdb.getRegister("$lo").value = "0x" + Convert.ToInt32(bitsel.Substring(bitsel.Length / 2), 2).ToString("X");
+                                    
+
+                                }
+                               
+
+
+                            }
+
+                            else
+                            {
+
+                                registerdb.getRegister("$lo").value = (longValue).ToString("x");
+                                try
+                                {
+
+                                    codes.Add(Convert.ToInt32("000000" + func.rtypeCode(result, v1, registerdb.getRegister("$lo")) + "011000", 2).ToString("X"));
+                                }
+                                catch
+                                {
+
+
+                                }
+                                
+
+
+
+                            }
+
+
+                        }
+                        break;
+
+                    case "mult":
+                        
                         try
                         {
                             long.TryParse(func.mult(result.value, variableList[1]), out longValue);
@@ -397,14 +609,43 @@ namespace Mars_Mips_Simulator
                             if (4294967296 < longValue)
                             {
                                 string bitsel = Convert.ToString(longValue, 2).PadLeft(64, '0');
-                                registerdb.getRegister("$hi").value = "0x" + Convert.ToInt32(bitsel.Substring(0, bitsel.Length / 2), 2).ToString("X");
-                                registerdb.getRegister("$lo").value = "0x" + Convert.ToInt32(bitsel.Substring(bitsel.Length / 2), 2).ToString("X");
+                                try
+                                {
+                                    registerdb.getRegister("$hi").value = "0x" + Convert.ToInt32(bitsel.Substring(0, bitsel.Length / 2), 2).ToString("X");
+
+                                    codes.Add(Convert.ToInt32("001000" + func.itypeCode(v1, result, variableList[2]), 2).ToString("X"));
+                                    registerdb.getRegister("$lo").value = "0x" + Convert.ToInt32(bitsel.Substring(bitsel.Length / 2), 2).ToString("X");
+                                    codes.Add(Convert.ToInt32("001000" + func.itypeCode(v1, result, variableList[2]), 2).ToString("X"));
+                                }
+                                catch
+                                {
+                                    registerdb.getRegister("$hi").value = "0x" + Convert.ToInt32(bitsel.Substring(0, bitsel.Length / 2), 2).ToString("X");
+
+                                
+                                    registerdb.getRegister("$lo").value = "0x" + Convert.ToInt32(bitsel.Substring(bitsel.Length / 2), 2).ToString("X");
+                                    
+
+                                }
+                             
+
+
                             }
 
                             else
                             {
 
                                 registerdb.getRegister("$lo").value = (longValue).ToString("x");
+                                try
+                                {
+
+                                    codes.Add(Convert.ToInt32("000000" + func.rtypeCode(result, v1, registerdb.getRegister("$lo")) + "011000", 2).ToString("X"));
+                                }
+                                catch
+                                {
+
+
+                                }
+                               
                             }
 
 
@@ -412,15 +653,30 @@ namespace Mars_Mips_Simulator
                        
                         catch
                         {
-
+                            // mult $t0, $t1
                             long.TryParse(func.mult(result.value, v1.value), out longValue);
                             
                             if (4294967296 < longValue) 
                             {
                                 string bitsel = Convert.ToString(longValue, 2).PadLeft(64, '0');
-                                registerdb.getRegister("$hi").value= "0x"+ Convert.ToInt32(bitsel.Substring(0,bitsel.Length/2), 2).ToString("X");
-                                registerdb.getRegister("$lo").value = "0x" + Convert.ToInt32(bitsel.Substring(bitsel.Length/2), 2).ToString("X");
-                                
+                                try
+                                {
+
+                                    registerdb.getRegister("$hi").value = "0x" + Convert.ToInt32(bitsel.Substring(0, bitsel.Length / 2), 2).ToString("X");
+                                    codes.Add(Convert.ToInt32("000000" + func.rtypeCode(result, v1, registerdb.getRegister("$hi")) + "011000", 2).ToString("X"));
+                                    registerdb.getRegister("$lo").value = "0x" + Convert.ToInt32(bitsel.Substring(bitsel.Length / 2), 2).ToString("X");
+                                    codes.Add(Convert.ToInt32("000000" + func.rtypeCode(result, v1, registerdb.getRegister("$lo")) + "011000", 2).ToString("X"));
+                                }
+                                catch
+                                {
+
+                                    registerdb.getRegister("$hi").value = "0x" + Convert.ToInt32(bitsel.Substring(0, bitsel.Length / 2), 2).ToString("X");
+           
+                                    registerdb.getRegister("$lo").value = "0x" + Convert.ToInt32(bitsel.Substring(bitsel.Length / 2), 2).ToString("X");
+                             
+                                }
+                              
+
 
                             }
 
@@ -428,7 +684,19 @@ namespace Mars_Mips_Simulator
                             {
                                 
                                 registerdb.getRegister("$lo").value = (longValue).ToString("x");
-                               
+                                try
+                                {
+
+                                    codes.Add(Convert.ToInt32("000000" + func.rtypeCode(result, v1, registerdb.getRegister("$lo")) + "011000", 2).ToString("X"));
+
+                                }
+                                catch
+                                {
+
+
+                                }
+                                
+
 
                             }
 
@@ -442,7 +710,17 @@ namespace Mars_Mips_Simulator
                     case "xor":
 
                         result.value = this.func.xor(v1.value, v2.value);
-                        codes.Add(Convert.ToInt32("000000" + func.rtypeCode(v1, v2, result) + "100110", 2).ToString("X"));
+                        try
+                        {
+
+                            codes.Add(Convert.ToInt32("000000" + func.rtypeCode(v1, v2, result) + "100110", 2).ToString("X"));
+                        }
+                        catch
+                        {
+
+
+                        }
+                        
 
                         result.value = "0x" + int.Parse(result.value).ToString("x");
                         listView1.Items[int.Parse(result.number)].SubItems[2].Text = result.value;
@@ -454,12 +732,34 @@ namespace Mars_Mips_Simulator
                         try
                         {
                             result.value = this.func.stl(v1.value, variableList[2]);
+                            try
+                            {
+
+                                codes.Add(Convert.ToInt32("001010" + func.itypeCode(v1, result, variableList[2]), 2).ToString("X"));
+                            }
+                            catch
+                            {
+
+
+                            }
+                            
+
 
                         }
                         catch
                         {
                             result.value = this.func.stl(v1.value, v2.value);
-                            codes.Add(Convert.ToInt32("000000" + func.rtypeCode(v1, v2, result) + "101010", 2).ToString("X"));
+                            try
+                            {
+
+                                codes.Add(Convert.ToInt32("000000" + func.rtypeCode(v1, v2, result) + "101010", 2).ToString("X"));
+                            }
+                            catch
+                            {
+
+
+                            }
+                           
 
                         }
 
@@ -473,12 +773,35 @@ namespace Mars_Mips_Simulator
                         try
                         {
                             result.value = this.func.srl(v1.value, variableList[2]);
+                            try
+                            {
+
+                                codes.Add(Convert.ToInt32("000010" + func.itypeCode(v1, result, variableList[2]), 2).ToString("X"));
+                            }
+                            catch
+                            {
+
+
+                            }
+                            
+
+
 
                         }
                         catch
                         {
                             result.value = this.func.srl(v1.value, v2.value);
-                            codes.Add(Convert.ToInt32("000000" + func.rtypeCode(v1, v2, result) + "000010", 2).ToString("X"));
+                            try
+                            {
+
+                                codes.Add(Convert.ToInt32("000000" + func.rtypeCode(v1, v2, result) + "000010", 2).ToString("X"));
+                            }
+                            catch
+                            {
+
+
+                            }
+                            
 
                         }
                         result.value = "0x" + int.Parse(result.value).ToString("x");
@@ -489,12 +812,33 @@ namespace Mars_Mips_Simulator
                         try
                         {
                             result.value = this.func.sll(v1.value, variableList[2]);
+                            try
+                            {
+
+                                codes.Add(Convert.ToInt32("000000" + func.itypeCode(v1, result, variableList[2]), 2).ToString("X"));
+                            }
+                            catch
+                            {
+
+
+                            }
+                           
 
                         }
                         catch
                         {
                             result.value = this.func.sll(v1.value, v2.value);
-                            codes.Add(Convert.ToInt32("000000" + func.rtypeCode(v1, v2, result) + "000000", 2).ToString("X"));
+                            try
+                            {
+
+                                codes.Add(Convert.ToInt32("000000" + func.rtypeCode(v1, v2, result) + "000000", 2).ToString("X"));
+                            }
+                            catch
+                            {
+
+
+                            }
+                           
 
                         }
                         result.value = "0x" + int.Parse(result.value).ToString("x");
@@ -506,11 +850,35 @@ namespace Mars_Mips_Simulator
                         try
                         {
                             val = this.func.beq(result.value, variableList[1]);
+                            try
+                            {
+
+                                codes.Add(Convert.ToInt32("000100" + func.itypeCode(v1, result, "1"), 2).ToString("X"));
+                            }
+                            catch
+                            {
+
+
+                            }
+                            
+
 
                         }
                         catch
                         {
                             val = this.func.beq(result.value,v1.value);
+                            try
+                            {
+
+                                codes.Add(Convert.ToInt32("000100" + func.itypeCode(v1, result, "1"), 2).ToString("X"));
+                            }
+                            catch
+                            {
+
+
+                            }
+                            
+
                         }
 
                         if (val== "1")
@@ -528,12 +896,40 @@ namespace Mars_Mips_Simulator
              
                         try
                         {
+                        
+
                             val = this.func.bne(result.value, variableList[1]);
+                            try
+                            {
+
+                                codes.Add(Convert.ToInt32("000101" + func.itypeCode(v1, result, "1"), 2).ToString("X"));
+                            }
+                            catch
+                            {
+
+
+                            }
+
+                           
 
                         }
                         catch
                         {
                             val = this.func.bne(result.value, v1.value);
+                            try
+                            {
+
+                                codes.Add(Convert.ToInt32("000101" + func.itypeCode(v1, result, "1"), 2).ToString("X"));
+                            }
+                            catch
+                            {
+
+
+                            }
+                            
+
+
+
                         }
 
                         if (val == "1")
@@ -550,6 +946,10 @@ namespace Mars_Mips_Simulator
                         break;
                     case "lui":
                         result = registerdb.getRegisters().Where(p => p.name == variableList[0]).First();
+
+                        codes.Add(Convert.ToInt32("011001" + "00100000101010001000100100", 2).ToString("X"));
+
+                        
                         result.value = func.lui(variableList[0], variableList[1]);
                         listView1.Items[int.Parse(result.number)].SubItems[2].Text = result.value;
 
@@ -557,6 +957,8 @@ namespace Mars_Mips_Simulator
                     case "mflo":
 
                         registerdb.getRegister(result.name).value = registerdb.getRegister("$lo").value;
+                        codes.Add(Convert.ToInt32("011001" + "01010010000100000100001010",2).ToString("X"));
+
                         listView1.Items[int.Parse("34")].SubItems[2].Text = "0x" + registerdb.getRegister("$lo").value;
 
                         break;
@@ -565,6 +967,8 @@ namespace Mars_Mips_Simulator
 
                         registerdb.getRegister(result.name).value = registerdb.getRegister("$hi").value;
                         listView1.Items[int.Parse("33")].SubItems[2].Text = "0x" + registerdb.getRegister("hi").value;
+                        codes.Add(Convert.ToInt32("011001" + "01000010000100000100100001",2).ToString("X"));
+
                         break;
                   
                     case "lw":
@@ -574,6 +978,18 @@ namespace Mars_Mips_Simulator
                         //result.value = this.func.lw(baseRegister.value, offset);
                         string address = this.func.lw(baseRegister.value, offset);
                         string dataValue = datadb.getData().Where(p => Convert.ToInt32(p.adress, 16) == Convert.ToInt32(address, 16)).First().value0;
+                        try
+                        {
+
+                            codes.Add(Convert.ToInt32("100011" + func.itypeCode(baseRegister, result, offset), 2).ToString("X"));
+                        }
+                        catch
+                        {
+
+
+                        }
+                        
+
                         registerdb.assignValue(result, dataValue);
                         //result.value = "0x" + int.Parse(result.value).ToString("X");
                         listView1.Items[int.Parse(result.number)].SubItems[2].Text = dataValue;
@@ -586,6 +1002,7 @@ namespace Mars_Mips_Simulator
                         baseRegister = registerdb.getRegisters().Where(p => p.name == base1).First();
                         //result.value = this.func.lw(baseRegister.value, offset);
                          address = this.func.lw(baseRegister.value, offset);
+                        codes.Add(Convert.ToInt32("100000" + "0010100010", 2).ToString("X"));
 
                         Console.WriteLine((Convert.ToInt64(address, 16) ));
                         if (256 < (Convert.ToInt32(address, 16)))
@@ -607,7 +1024,19 @@ namespace Mars_Mips_Simulator
                         string base2 = variableList[1].Split("(")[1].Split(")")[0];
                         baseRegister = registerdb.getRegisters().Where(p => p.name == base2).First();
                         string addressHex = this.func.sw(baseRegister.value, offset1);
-                     
+                        try
+                        {
+
+                            codes.Add(Convert.ToInt32("101011" + func.itypeCode(baseRegister, result, offset1), 2).ToString("X"));
+                        }
+                        catch
+                        {
+
+
+                        }
+                
+
+
                         try
                         {
                             resultData = this.datadb.getData().Where(p => Convert.ToInt32(p.adress, 16) == Convert.ToInt32(addressHex, 16)).First();
@@ -629,6 +1058,8 @@ namespace Mars_Mips_Simulator
                          base2 = variableList[1].Split("(")[1].Split(")")[0];
                         baseRegister = registerdb.getRegisters().Where(p => p.name == base2).First();
                          addressHex = this.func.sw(baseRegister.value, offset1);
+                        codes.Add(Convert.ToInt32("101000" + "0010100010", 2).ToString("X"));
+
                         if (256 < (Convert.ToInt32(addressHex, 16)))
                         {
                             MessageBox.Show("Data error");
@@ -654,6 +1085,8 @@ namespace Mars_Mips_Simulator
                     case "jr":
 
                         pc.value = ra.value;
+
+
                         listView1.Items[31].SubItems[2].Text = "0x00000000";
                         if (ra.value == "0x00000000")
                         {

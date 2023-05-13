@@ -25,7 +25,7 @@ namespace Mars_Mips_Simulator
             int number;
             if (int.TryParse(num2, System.Globalization.NumberStyles.HexNumber, null, out number))
             {
-                return (Convert.ToInt32(num1, 16) + (int.Parse(num2, System.Globalization.NumberStyles.AllowLeadingSign))).ToString();
+                return (Convert.ToInt64(num1, 16) + (int.Parse(num2, System.Globalization.NumberStyles.AllowLeadingSign))).ToString();
 
             }
             else if (int.TryParse(num2, System.Globalization.NumberStyles.HexNumber, null, out number)&& int.TryParse(num1, System.Globalization.NumberStyles.HexNumber, null, out number))
@@ -34,12 +34,12 @@ namespace Mars_Mips_Simulator
             }
             else if (num2.Contains("-"))
             {
-                return (Convert.ToInt32(num1, 16) - int.Parse(num2.TrimStart('-'))).ToString();
+                return (Convert.ToInt64(num1, 16) - int.Parse(num2.TrimStart('-'))).ToString();
             }
             else
             {
       
-                return (Convert.ToInt32(num2, 16) + Convert.ToInt32(num1, 16)).ToString();
+                return (Convert.ToInt64(num2, 16) + Convert.ToInt64(num1, 16)).ToString();
             }
 
            
@@ -184,6 +184,28 @@ namespace Mars_Mips_Simulator
             {
 
                 return (Convert.ToInt64(num2, 16) * Convert.ToInt32(num1, 16)).ToString();
+            }
+
+
+        }
+        public string div(string num1, string num2)
+        {
+
+
+            int number;
+            if (int.TryParse(num2, System.Globalization.NumberStyles.HexNumber, null, out number))
+            {
+                return (Convert.ToInt64(num1, 16) / (int.Parse(num2))).ToString();
+
+            }
+            else if (int.TryParse(num2, System.Globalization.NumberStyles.HexNumber, null, out number) && int.TryParse(num1, System.Globalization.NumberStyles.HexNumber, null, out number))
+            {
+                return ((int.Parse(num1)) / (int.Parse(num2))).ToString();
+            }
+            else
+            {
+
+                return (Convert.ToInt64(num2, 16) / Convert.ToInt64(num1, 16)).ToString();
             }
 
 
@@ -383,8 +405,9 @@ namespace Mars_Mips_Simulator
         public string itypeCode(Register rs, Register rt, string imm)
         {
 
-            return Convert.ToString(int.Parse(rs.number), 2).PadLeft(5, '0') + Convert.ToString(int.Parse(rt.number), 2).PadLeft(5, '0') + Convert.ToString(int.Parse(imm), 2).PadLeft(16, '0') ;
+            return Convert.ToString(Convert.ToInt64(rs.number), 2).PadLeft(5, '0') + Convert.ToString(Convert.ToInt64(rt.number), 2).PadLeft(5, '0') + Convert.ToString(Convert.ToInt64(imm), 2).PadLeft(16, '0') ;
         }
+   
 
     }
 }
