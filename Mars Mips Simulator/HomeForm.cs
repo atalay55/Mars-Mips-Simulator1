@@ -24,7 +24,7 @@ namespace Mars_Mips_Simulator
         string functionName;
         Register result,v1,v2, baseRegister,pc,ra;
         int insMemory = 0x00400000;
-        int line, i = 0;
+        int line, i, j ,jline= 0;
 
 
         Dictionary<string,int> labes;
@@ -135,7 +135,7 @@ namespace Mars_Mips_Simulator
 
         private void button1_Click(object sender, EventArgs e)
         {
-            this.i = 0;
+            this.line = 0; this.i = 0; this.j = 0; this.jline = 0;
             this.listView2.Visible = true;
             this.richTextBox1.Visible = false;
             this.listView3.Visible = true;
@@ -145,11 +145,16 @@ namespace Mars_Mips_Simulator
             try
             {
 
-                while (i <= ınstructions.Count)
+                while (j <= ınstructions.Count)
                 {
                     if (ınstructions[i].data.Contains("exit")) { break; }
 
                     string mainText = richTextBox1.Lines[i];
+                    if (string.IsNullOrEmpty(mainText))
+                    {
+                        i++;
+                        continue;
+                    }
                     string[] arraay = mainText.Split(" ");
                     this.functionName = arraay[0];
                     string[] constants = arraay.Skip(1).ToArray();
@@ -161,7 +166,7 @@ namespace Mars_Mips_Simulator
                     foreach (var item in labes)
                     {
 
-                        if (functionName == "j" && item.Key == variableList[0] && Convert.ToInt32(pc.value, 16) <= ınstructions[i].insMemory)
+                        if (functionName == "j" && item.Key == variableList[0] && Convert.ToInt32(pc.value, 16) <= ınstructions[j].insMemory)
                         {
                             labes.Remove(item.Key);
                             pc.value =(item.Value + 4).ToString("X");
@@ -172,7 +177,7 @@ namespace Mars_Mips_Simulator
                             ra.value = (Convert.ToInt32(pc.value, 16)).ToString("X");
                             listView1.Items[31].SubItems[2].Text = ra.value;
                             line = i;
-                            Console.WriteLine(item);
+                            jline = j;
                             pc.value = (item.Value + 4).ToString("X");
                         }
 
@@ -189,7 +194,7 @@ namespace Mars_Mips_Simulator
 
              
 
-                    if (Convert.ToInt32(pc.value, 16) == ınstructions[i].insMemory)
+                    if (Convert.ToInt32(pc.value, 16) == ınstructions[j].insMemory)
                     {
 
                         result = registerdb.getRegisters().Where(p => p.name == variableList[0]).First();
@@ -220,6 +225,7 @@ namespace Mars_Mips_Simulator
 
 
                     i++;
+                    j++;
 
                 }
 
@@ -247,8 +253,9 @@ namespace Mars_Mips_Simulator
 
         public void createInstruction( )
         {
-          
-           
+
+            int k = 0;
+
             for (int i = 0; i < richTextBox1.Lines.Length; i++)
             {
 
@@ -262,12 +269,14 @@ namespace Mars_Mips_Simulator
                 else
                 {
 
-                    int val = this.insMemory + (i * 4);
+                    int val = this.insMemory + (k * 4);
                     this.ınstructions.Add(new Instruction(richTextBox1.Lines[i], val));
                     if (richTextBox1.Lines[i].Contains(":"))
                     {
                         labes.Add(richTextBox1.Lines[i].Substring(0,richTextBox1.Lines[i].Length-1), val);
+                       
                     }
+                    k++ ;
 
 
 
@@ -610,6 +619,7 @@ namespace Mars_Mips_Simulator
                         else
                         {
                             i = line;
+                            j = jline;
                         }
 
 
