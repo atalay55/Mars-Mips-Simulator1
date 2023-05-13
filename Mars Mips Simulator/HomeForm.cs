@@ -144,6 +144,7 @@ namespace Mars_Mips_Simulator
             this.listView3.Visible = false;
             this.richTextBox1.Clear();
             this.registerdb = new RegisterDb();
+            this.datadb = new DataDb();
             this.listView1.Items.Clear();
             this.listView2.Items.Clear();
             showAllRegister();
