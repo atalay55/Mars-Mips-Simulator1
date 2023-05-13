@@ -368,34 +368,43 @@ namespace Mars_Mips_Simulator
 
                         break;
                     case "mult":
+                        long longValue;
                         try
                         {
-                            Console.WriteLine(429496729 > int.Parse(func.mult(result.value, variableList[1])));
-                            if ( 4294967295 > double.Parse(func.mult(result.value, variableList[1])))
+                            long.TryParse(func.mult(result.value, variableList[1]), out longValue);
+
+                            if (4294967296 < longValue)
                             {
-                                registerdb.getRegister("$lo").value = "0x" + this.func.mult(result.value, variableList[1]);
+                                string bitsel = Convert.ToString(longValue, 2).PadLeft(64, '0');
+                                registerdb.getRegister("$hi").value = "0x" + Convert.ToInt32(bitsel.Substring(0, bitsel.Length / 2), 2).ToString("X");
+                                registerdb.getRegister("$lo").value = "0x" + Convert.ToInt32(bitsel.Substring(bitsel.Length / 2), 2).ToString("X");
                             }
-                            else if (429496729 < int.Parse(func.mult(result.value, v1.value)))
+
+                            else
                             {
-                                registerdb.getRegister("$hi").value = (double.Parse(func.mult(result.value, variableList[1])) - 4294967295).ToString("x");
+
+                                registerdb.getRegister("$lo").value = (longValue).ToString("x");
                             }
-                           
+
 
                         }
+                       
                         catch
                         {
+
+                            long.TryParse(func.mult(result.value, v1.value), out longValue);
                             
-                           
-                            Console.WriteLine(func.mult(result.value, v1.value));
-                            if (4294967296 > int.Parse(func.mult(result.value, v1.value))) 
+                            if (4294967296 < longValue) 
                             {
-                                registerdb.getRegister("$lo").value = "0x" + (int.Parse(this.func.mult(result.value, v1.value))).ToString("x");
+                                string bitsel = Convert.ToString(longValue, 2).PadLeft(64, '0');
+                                registerdb.getRegister("$hi").value= "0x"+ Convert.ToInt32(bitsel.Substring(0,bitsel.Length/2), 2).ToString("X");
+                                registerdb.getRegister("$lo").value = "0x" + Convert.ToInt32(bitsel.Substring(bitsel.Length/2), 2).ToString("X");
                             }
                            
                             else 
                             {
                                 
-                                registerdb.getRegister("$hi").value = (int.Parse(func.mult(result.value, v1.value)) - 4294967295).ToString("x");
+                                registerdb.getRegister("$lo").value = (longValue).ToString("x");
                             }
                             
 
