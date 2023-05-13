@@ -534,7 +534,9 @@ namespace Mars_Mips_Simulator
                         baseRegister = registerdb.getRegisters().Where(p => p.name == base1).First();
                         //result.value = this.func.lw(baseRegister.value, offset);
                          address = this.func.lw(baseRegister.value, offset);
-                        if (256 > int.Parse(address))
+
+                        Console.WriteLine((Convert.ToInt64(address, 16) ));
+                        if (256 < (Convert.ToInt32(address, 16)))
                         {
                             MessageBox.Show("Data error");
                             break;
@@ -553,11 +555,7 @@ namespace Mars_Mips_Simulator
                         string base2 = variableList[1].Split("(")[1].Split(")")[0];
                         baseRegister = registerdb.getRegisters().Where(p => p.name == base2).First();
                         string addressHex = this.func.sw(baseRegister.value, offset1);
-                        if (256 > int.Parse(addressHex))
-                        {
-                            MessageBox.Show("Data error");
-                            break;
-                        }
+                     
                         try
                         {
                             resultData = this.datadb.getData().Where(p => Convert.ToInt32(p.adress, 16) == Convert.ToInt32(addressHex, 16)).First();
@@ -579,7 +577,7 @@ namespace Mars_Mips_Simulator
                          base2 = variableList[1].Split("(")[1].Split(")")[0];
                         baseRegister = registerdb.getRegisters().Where(p => p.name == base2).First();
                          addressHex = this.func.sw(baseRegister.value, offset1);
-                        if (256 > int.Parse(addressHex))
+                        if (256 < (Convert.ToInt32(addressHex, 16)))
                         {
                             MessageBox.Show("Data error");
                             break;
